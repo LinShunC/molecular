@@ -179,27 +179,34 @@ module.exports = {
         },
 
         getCartInfo() {
+            var a;
             return new Promise(function(resolve) {
                 var ref = firebase.database().ref();
+
                 // var userid = firebase.auth().currentUser.uid;
                 var messageref = ref.child("cart").child("pJ2bkgu42CWq1DiYzbfoQL3Pxm22");
 
                 messageref.on('value', function(snapshot) {
 
-                    resolve({ snapshot });
+
+                    //resolve({ a });
 
                     snapshot.forEach(function(childSnapshot) {
                         // key will be "ada" the first time and "alan" the second time
                         var key = childSnapshot.key;
+
                         // childData will be the actual contents of the child
                         var childData = childSnapshot.val();
-
+                        a += childData;
+                        /*fs.appendFile('./cart.json', childData, function(err) {
+                            if (err) throw err;
+                            console.log('Saved!');
+                        });*/
                         console.log(childData);
-
-                        resolve({ childData });
 
 
                     });
+                    resolve({});
 
 
 
@@ -216,6 +223,7 @@ module.exports = {
         getInformation() {
             //var realFile = Buffer.from(ctx.params.image, "base64");
             return new Promise(function(resolve) {
+
 
                 /* resolve({
                      "name": "name",
