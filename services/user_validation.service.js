@@ -77,6 +77,10 @@ module.exports = {
         AddToCart: {
             params: {
                 id: "string",
+                price: "string",
+                name: "string",
+                url: "string",
+
 
             },
             handler(ctx) {
@@ -100,40 +104,62 @@ module.exports = {
 
         AddToCart(ctx) {
             var ref = firebase.database().ref();
-            /*ref.once("value")
-            	.then(function(snapshot) {
-            		console.log("snap.val()", snap.val());
-            	});*/
-
             //var userid = firebase.auth().currentUser.uid;
-            fs.readFile('./cart.json', (err, data) => {
-                if (err) throw err;
-                let student = JSON.parse(data)['student'];
-                var obj = {
-                    table: []
-                };
-                obj.table.push({ student });
-                obj.table.push({ id: ctx.params.id, square: 6 });
-                var json = JSON.stringify(obj);
-                fs.writeFile('./cart.json', json, function(err) {
-                    if (err) throw err;
-                    console.log('complete');
+            var messageref = ref.child("message").child("testid86");
+            return new Promise(function(resolve) {
+                messageref.push({
+                    id: ctx.params.id,
+                    price: ctx.params.price,
+                    name: ctx.params.name,
+                    url: ctx.params.url
                 });
+                resolve({ valid: true });
 
             });
 
+            /*  messageref.on('child_added', function(data) {
+                  console.log(data.key + "id" + data.val().id);
+                  if (data.val().id == ctx.params.id) {
+                      console.log(data.key);
+                      let userRef = messageref.child(data.key);
+                      userRef.remove();
+                  }
+              });*/
 
-            /*var messageref = ref.child("message").child(userid);
-            //var id = ctx.params.id;
-            messageref.once('value').then(function(snapshot) {
+            //var userid = firebase.auth().currentUser.uid;
+            /* fs.readFile('./cart.json', (err, data) => {
+                 if (err) throw err;
+                 let student = JSON.parse(data)['table'];
+                 console.log('value' + student.val());
+                 var obj = {
+                     table: []
+                 };
+                 obj.table.push(student);
+                 obj.table.push({ id: ctx.params.id, square: 6 });
+                 var json = JSON.stringify(obj);
+                 fs.writeFile('./cart.json', json, function(err) {
+                     if (err) throw err;
+                     console.log('complete');
+                 });
 
-                console.log("snap.val()", snapshot.val());
-                return new Promise(function(resolve) {
-                    resolve({ valid: snapshot.val() })
-                });
+             });*/
 
-                // ...
-            });*/
+            //var userid = firebase.auth().currentUser.uid;
+
+            /* var id = ctx.params.id;
+             messageref.push({
+                 id: ctx.params.id
+             }); */
+
+            /* messageref.once('value').then(function(snapshot) {
+
+                 console.log("snap.val()", snapshot.key);
+                 return new Promise(function(resolve) {
+                     resolve({ valid: snapshot.val() })
+                 });
+
+                 // ...
+             });*/
             /* messageref.set({
                  id: ctx.params.id
              });*/
