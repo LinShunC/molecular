@@ -74,6 +74,12 @@ module.exports = {
                 return this.getInformation();
             }
         },
+        getCartInfo: {
+
+            handler() {
+                return this.getCartInfo();
+            }
+        },
         AddToCart: {
             params: {
                 id: "string",
@@ -85,6 +91,14 @@ module.exports = {
             },
             handler(ctx) {
                 return this.AddToCart(ctx);
+            }
+        },
+        RemoveFromCart: {
+            params: {
+                id: "string",
+            },
+            handler(ctx) {
+                return this.RemoveFromCart(ctx);
             }
         },
 
@@ -101,13 +115,28 @@ module.exports = {
      * Methods
      */
     methods: {
+        RemoveFromCart(ctx) {
+            var ref = firebase.database().ref();
+            var userid = firebase.auth().currentUser.uid;
+            var messageref = ref.child("cart").child(userid);
+            return new Promise(function(resolve) {
+
+                let userRef = messageref.child(ctx.params.id);
+                userRef.remove();
+
+                resolve({ valid: true });
+
+            });
+        },
 
         AddToCart(ctx) {
             var ref = firebase.database().ref();
-            //var userid = firebase.auth().currentUser.uid;
-            var messageref = ref.child("message").child("testid86");
+            var userid = firebase.auth().currentUser.uid;
+
+
+            var messageref = ref.child("cart").child(userid).child(ctx.params.id);
             return new Promise(function(resolve) {
-                messageref.push({
+                messageref.set({
                     id: ctx.params.id,
                     price: ctx.params.price,
                     name: ctx.params.name,
@@ -144,29 +173,46 @@ module.exports = {
 
              });*/
 
-            //var userid = firebase.auth().currentUser.uid;
 
-            /* var id = ctx.params.id;
-             messageref.push({
-                 id: ctx.params.id
-             }); */
-
-            /* messageref.once('value').then(function(snapshot) {
-
-                 console.log("snap.val()", snapshot.key);
-                 return new Promise(function(resolve) {
-                     resolve({ valid: snapshot.val() })
-                 });
-
-                 // ...
-             });*/
-            /* messageref.set({
-                 id: ctx.params.id
-             });*/
 
 
         },
 
+        getCartInfo() {
+            return new Promise(function(resolve) {
+                var ref = firebase.database().ref();
+                // var userid = firebase.auth().currentUser.uid;
+                var messageref = ref.child("cart").child("pJ2bkgu42CWq1DiYzbfoQL3Pxm22");
+
+                messageref.on('value', function(snapshot) {
+
+                    resolve({ snapshot });
+
+                    snapshot.forEach(function(childSnapshot) {
+                        // key will be "ada" the first time and "alan" the second time
+                        var key = childSnapshot.key;
+                        // childData will be the actual contents of the child
+                        var childData = childSnapshot.val();
+
+                        console.log(childData);
+
+                        resolve({ childData });
+
+
+                    });
+
+
+
+                    //console.log(data.child.val());
+
+
+                });
+
+
+
+
+            });
+        },
         getInformation() {
             //var realFile = Buffer.from(ctx.params.image, "base64");
             return new Promise(function(resolve) {
@@ -216,12 +262,6 @@ module.exports = {
         // private funtions are delcared here
         validateUser(ctx) {
             return new Promise(function(resolve) {
-                /* firebase.auth().createUserWithEmailAndPassword("test5@gmail.com", "aaaaaa").then(function() {
-                     resolve({ valid: true, userid: firebase.auth().currentUser.uid });
-                 }).catch(function(error) {
-                     resolve({ valid: false });
-                     // An error happened.
-                 });*/
 
                 firebase.auth()
                     .signInWithEmailAndPassword(ctx.params.username, ctx.params.password)
@@ -231,40 +271,13 @@ module.exports = {
                         resolve({ valid: false });
                     })
 
-                /*  firebase.auth().signInWithEmailAndPassword("test5@gmail.com", "aaaaaa").then(function() {
-                      resolve({ valid: true, userid: firebase.auth().currentUser.uid });
-                  }).catch(function(error) {
-                      // Handle Errors here.
-                      var errorCode = error.code;
-                      var errorMessage = error.message;
-                      resolve({ valid: false });
-                      // ...
-                  });*/
 
 
             });
 
         },
 
-        updateMessage() {
-            var ref = firebase.database().ref();
 
-            var messageref = ref.child("message")
-            messageref.once("value")
-                .then(function(snapshot) {
-                    console.log("snap.val()", snapshot.val());
-                });
-            messageref.push({
-                name: 'chi',
-                admin: true,
-                count: 1,
-                text: "asdas"
-            });
-            let THIS = this;
-            return new Promise(function(resolve) {
-                resolve({ valid: true })
-            });
-        }
 
     },
 
