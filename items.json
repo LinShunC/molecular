@@ -1,7 +1,7 @@
 {
     "image": [{
             "id": "1",
-            "name": "ferrari",
+            "name": "Ferrari",
             "price": "$100000",
             "url": "https://firebasestorage.googleapis.com/v0/b/crossplatform-b527e.appspot.com/o/images.jpeg?alt=media&token=9bcf701b-ebc3-4b17-8499-ed745a3bb71f"
         },

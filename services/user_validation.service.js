@@ -183,13 +183,13 @@ module.exports = {
             return new Promise(function(resolve) {
                 var ref = firebase.database().ref();
 
-                // var userid = firebase.auth().currentUser.uid;
-                var messageref = ref.child("cart").child("pJ2bkgu42CWq1DiYzbfoQL3Pxm22");
+                var userid = firebase.auth().currentUser.uid;
+                var messageref = ref.child("cart").child(userid);
 
                 messageref.on('value', function(snapshot) {
 
 
-                    //resolve({ a });
+                    let arrry = [];
 
                     snapshot.forEach(function(childSnapshot) {
                         // key will be "ada" the first time and "alan" the second time
@@ -198,16 +198,15 @@ module.exports = {
                         // childData will be the actual contents of the child
                         var childData = childSnapshot.val();
                         a += childData;
-                        /*fs.appendFile('./cart.json', childData, function(err) {
-                            if (err) throw err;
-                            console.log('Saved!');
-                        });*/
+
+
                         console.log(childData);
+                        arrry.push(childData)
 
 
                     });
-                    resolve({});
 
+                    resolve({ arrry });
 
 
                     //console.log(data.child.val());
@@ -257,7 +256,7 @@ module.exports = {
 
                 firebase.auth().createUserWithEmailAndPassword(ctx.params.username, ctx.params.password).then(function() {
 
-                    resolve({ valid: true, userid: firebase.auth().currentUser.uid });
+                    resolve({ valid: true });
 
                 }).catch(function(error) {
                     resolve({ valid: false });
