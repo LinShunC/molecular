@@ -93,6 +93,19 @@ module.exports = {
                 return this.AddToCart(ctx);
             }
         },
+        PaymentRecord: {
+            params: {
+                name: "string",
+                cardNumber: "string",
+                expirationData: "string",
+                securityCode: "string",
+
+
+            },
+            handler(ctx) {
+                return this.PaymentRecord(ctx);
+            }
+        },
         RemoveFromCart: {
             params: {
                 id: "string",
@@ -115,6 +128,23 @@ module.exports = {
      * Methods
      */
     methods: {
+        PaymentRecord(ctx) {
+            var ref = firebase.database().ref();
+            var userid = firebase.auth().currentUser.uid;
+            var messageref = ref.child("paymentRecord").child(userid);
+            return new Promise(function(resolve) {
+
+                messageref.push({
+                    name: ctx.params.name,
+                    cardNumber: ctx.params.cardNumber,
+                    expirationData: ctx.params.expirationData,
+                    securityCode: ctx.params.securityCode
+                });
+                resolve({ valid: true });
+
+            });
+        },
+
         RemoveFromCart(ctx) {
             var ref = firebase.database().ref();
             var userid = firebase.auth().currentUser.uid;
